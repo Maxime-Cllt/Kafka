@@ -1,17 +1,47 @@
 package org.kafka;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.admin.ListTopicsResult;
+import org.apache.kafka.clients.admin.NewTopic;
+
+import java.util.Collections;
+import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+        Properties config = new Properties();
+        config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+
+        try (AdminClient adminClient = AdminClient.create(config)) {
+
+            String topicName = "rahman-topic";
+            int numPartitions = 3;
+            short replicationFactor = 1; // Attention : 1 seul broker = 1 réplique
+
+            NewTopic newTopic = new NewTopic(topicName, numPartitions, replicationFactor);
+
+            // Création du topic
+            adminClient.createTopics(Collections.singletonList(newTopic)).all().get();
+            System.out.println("Topic '" + topicName + "' créé avec succès !");
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
         }
+
+
+        try (AdminClient adminClient = AdminClient.create(config)) {
+            ListTopicsResult topics = adminClient.listTopics();
+            System.out.println("Kafka Topics: " + topics.names().get());
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        System.out.println("Hello World");
+
+
     }
 }

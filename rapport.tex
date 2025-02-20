@@ -2,26 +2,10 @@ Master 2 Bases de Données et Intelligence Artificielle
 Module de Gestion et analyse des Données Massives
 Exercice de CC à rendre pour le 21 Mars 2025
 À réaliser par groupe de 2 étudiants au maximum
-Toute utilisation de ChatGPT ou autre LLM/assistant pour produire le code sera sanctionnée comme
-du plagiat.
 Pour les exercices 2 et 3, vous devez rendre un rapport d’analyse de 5 à 10 pages maximum et
 le code source. Ces éléments seront à déposer sur Plubel. Aucun rendu ne sera accepté en dehors du
 dépôt sur Plubel. Les questions sont un guide. Vous devez détailler la conception de votre programme
 et expliquer les éléments techniques essentiels.
-Exercice 1 : Installation de Kafka
-À partir des éléments donnés en cours, réaliser l’installation de base d’Apache Kafka (http://
-kafka.apache.org/).
-1. Décompresser l’archive. Copier et modifier le fichier des propriétés pour pouvoir lancer 2 brokers
-(faire attention à bien créer des répertoires différents pour chaque broker). Dans le fichier de
-configuration, modifier les paramètres pour pouvoir créer des brokers différents, ainsi que pour
-utiliser un répertoire de stockage des données dans votre home (pour Zookeeper et chaque
-broker).
-2. Lancer Zookeeper et les deux instances de Kafka (broker) dans trois terminaux différents.
-3. Créer un topic en spécifiant le facteur de réplication et le nombre de partitions (au moins 2).
-4. Lancer les consoles producteur et consommateur (dans deux terminaux), expérimenter l’envoi
-de messages. Observer la trace des logs sur chacun des terminaux.
-À l’issue de cette étape, si vous n’avez pas eu de message d’erreur votre installation de Kafka est
-fonctionnelle.
 Exercice 2 : Réalisation de programmes clients Java
 On cherche à utiliser Apache Kafka depuis un programme Java et à comparer ses fonctionnalités
 avec JMS. Utiliser Maven (commande mvn) pour compiler les programmes et exécuter les programmes.
@@ -43,7 +27,6 @@ d’un ensemble de bâtiments.
 en utilisant les principes de Kafka et Kakfa streams.
 1. Ils sont adaptés de ceux développés par Gwen Shapira, un des commiteers de Kafka (https://github.com/
 gwenshap/kafka-examples)
-Annabelle Gillet — Département IEM 1
 2. Définir et réaliser un programme multi-producteurs pour générer un flux de données de température. On considère que chaque bâtiment émet des données ayant comme clé le nom du
 bâtiment, et comme valeur un ensemble de données constituées du nom de la salle et de sa
 température. Les messages sont envoyés toutes les 10 secondes par les bâtiments. Le topic dans
@@ -56,3 +39,10 @@ passe en-dessous ou au-dessus d’un certain seuil.
 
 
 
+
+\section{Introduction}
+
+\subsection{Objectifs}
+
+L'objectif de ce projet est de réaliser une conception avec Zookeeper et Kafka pour la gestion de données massives.
+Nous allons réaliser un programme Java qui gère des flux de données entre des producteurs et des consommateurs.

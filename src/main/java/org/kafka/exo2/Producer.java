@@ -1,8 +1,9 @@
-package org.kafka;
+package org.kafka.exo2;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.kafka.Constant;
 
 import java.util.Properties;
 import java.util.UUID;
@@ -10,8 +11,6 @@ import java.util.UUID;
 public class Producer {
     public static void main(String[] args) {
 
-
-        final String topicName = "premier";
 
         // Configuration du producteur
         Properties props = new Properties();
@@ -22,22 +21,17 @@ public class Producer {
         try (org.apache.kafka.clients.producer.Producer<String, String> producer = new KafkaProducer<>(props)) {
 
             int i = 0;
-
             String message;
-
             final long now = System.currentTimeMillis();
             ProducerRecord<String, String> record;
 
             while (true) {
 
                 message = UUID.randomUUID().toString();
-
-                record = new ProducerRecord<>(topicName, message);
-
+                record = new ProducerRecord<>(Constant.PREMIER_TOPIC, message);
                 producer.send(record);
 
                 i++;
-
                 if (i > 1_000_000) {
                     break;
                 }

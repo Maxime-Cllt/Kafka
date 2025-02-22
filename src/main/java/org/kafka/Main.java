@@ -17,18 +17,16 @@ public class Main {
 
 
     public static void init() {
-        final String topicName = "premier";
+        final String topicName[] = {Constant.PREMIER_TOPIC, Constant.TEMPERATURE_TOPIC};
         Properties config = new Properties();
         config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, Constant.KAFKA_1_URL);
 
-        if (topicExist(config, topicName)) {
-            System.out.println("Initiation des topics...");
-            createTopic(config, "premier", 1, (short) 1);
-            listAllTopics(config);
-            return;
+        for (String topic : topicName) {
+            if (!topicExist(config, topic)) {
+                System.out.println("Initiation des topics...");
+                createTopic(config, topic, 1, (short) 1);
+            }
         }
-
-        System.out.println("Les topics sont déjà initiés");
     }
 
 

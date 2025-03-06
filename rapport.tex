@@ -1,4 +1,4 @@
-Master 2 Bases de Données et Intelligence Artificielle
+\usepackage{booktabs}Master 2 Bases de Données et Intelligence Artificielle
 Module de Gestion et analyse des Données Massives
 Exercice de CC à rendre pour le 21 Mars 2025
 À réaliser par groupe de 2 étudiants au maximum
@@ -37,12 +37,155 @@ une fenêtre de 5 minutes. Une alerte doit pouvoir être émise lorsque la temp�
 passe en-dessous ou au-dessus d’un certain seuil.
 
 
-
-
-
 \section{Introduction}
 
 \subsection{Objectifs}
 
 L'objectif de ce projet est de réaliser une conception avec Zookeeper et Kafka pour la gestion de données massives.
 Nous allons réaliser un programme Java qui gère des flux de données entre des producteurs et des consommateurs.
+Ces données seront des températures émises par des capteurs de différents bâtiments.
+
+
+\section{Conception}
+
+Cette partie détaille l’architecture et la conception technique du système, en mettant en avant les choix technologiques et les composants clés.
+
+
+\section{Architecture et Conception Technique (suite)}
+
+\subsection{Architecture détaillée}
+
+L’architecture mise en place repose sur plusieurs composants clés qui garantissent la scalabilité, la tolérance aux pannes et la performance du système :
+
+\begin{itemize}
+    \item \textbf{Zookeeper} : Utilisé pour la coordination entre les différents nœuds du cluster Kafka.
+    Zookeeper permet la gestion des métadonnées (état des brokers, gestion des topics, etc.) et assure la cohérence dans l’ensemble du système.
+    \item \textbf{Kafka Broker} : Sert de point central pour la transmission des messages entre les producteurs et les consommateurs.
+    Le broker gère les topics, les partitions et la réplication des messages pour garantir une haute disponibilité.
+    \item \textbf{Producteurs Java} : Implémentés en Java et orchestrés via Maven, ils sont responsables de la production et de l’envoi de messages vers Kafka.
+    Le code s’appuie sur l’API Kafka et se structure de manière à permettre l’envoi de messages en masse (jusqu’à 10\textsuperscript{6} messages répartis sur 2 partitions, dans le cadre de l’exercice 2).
+    \item \textbf{Consommateurs Java} : Également développés en Java, ils récupèrent les messages émis par les producteurs.
+    Deux configurations sont envisagées : des consommateurs appartenant au même groupe et des consommateurs appartenant à des groupes distincts, ce qui permet d’étudier les impacts sur le débit de consommation et la gestion de la charge.
+    \item \textbf{Kafka Streams} : Dans l’exercice 3, Kafka Streams est exploité pour le traitement en temps réel des données issues des capteurs de température.
+    Ce framework permet de définir des topologies de traitement pour agréger les données (par exemple, calcul de moyenne sur une fenêtre temporelle) et générer des alertes en cas de dépassement de seuils.
+\end{itemize}
+
+Voici un schéma récapitulatif de l’architecture détaillée :
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/architecture.png}
+    \caption{Architecture détaillée du système}
+\end{figure}
+
+\subsection{Justification des choix techniques}\label{subsec:justification-des-choix-techniques}
+
+Les choix techniques effectués pour la conception de l’architecture reposent sur plusieurs critères clés :
+
+\paragraph{Utilisation de Kafka et Zookeeper}
+Le choix de Kafka repose sur sa capacité à gérer de très gros volumes de données en temps réel grâce à sa conception distribuée et partitionnée.
+L’intégration de Zookeeper permet d’assurer la coordination des brokers et de maintenir une vision cohérente de l’état du cluster, notamment en cas de défaillance d’un nœud. Cette approche répond aux exigences des applications de données massives et de stream processing, en garantissant une faible latence et une haute disponibilité.
+
+\paragraph{Comparaison avec JMS}
+Le framework JMS (Java Message Service) offre une solution de messagerie orientée vers la fiabilité et la simplicité d’utilisation.
+Toutefois, Kafka se distingue par sa capacité à traiter des flux de données en continu avec une meilleure performance en termes de débit et de scalabilité. Le rapport comparera les fonctionnalités relatives à la gestion des topics, à la persistance des messages et aux modèles de consommation (push vs pull), afin de mettre en évidence les avantages et inconvénients de chaque approche.
+
+
+\section{Implémentation}\label{sec:implementation}
+
+Cette partie détaille l’implémentation des exercices 2 et 3, en mettant l’accent sur les aspects techniques et les choix de développement.
+
+\subsection{Détails de l’implémentation – Exercice 2 : Programmes clients Java}\label{subsec:details-de-limplementation--exercice-2-:-programmes-clients-java}
+
+L'exercice 2 consiste à développer un producteur et un consommateur Java pour interagir avec Kafka, et à comparer les fonctionnalités de consommation de messages avec JMS.
+
+\subsubsection{Développement du producteur}
+Le producteur Java s’appuie sur l’API Kafka pour initialiser une connexion au cluster via une configuration définissant notamment l’adresse du broker, le sérialiseur de clés et de valeurs, ainsi que les paramètres de réessai. Après compilation via Maven, le programme est lancé et envoie un flux de messages test. Une validation de la bonne réception est effectuée en observant la sortie console du consommateur.
+
+\subsubsection{Développement du consommateur}
+Le consommateur est conçu pour s’abonner à un topic et récupérer les messages.
+Deux modes d’opération sont testés :
+\begin{enumerate}
+    \item \textbf{Consommateurs dans un même groupe :} Permet de répartir la charge de travail.
+    L’expérience sera réalisée avec 2 puis 3 consommateurs, afin de mesurer l’impact sur la latence et le débit.
+    \item \textbf{Consommateurs de différents groupes :} Chaque consommateur reçoit l’intégralité des messages, permettant une comparaison avec le mode de consommation groupé.
+\end{enumerate}
+
+Les performances sont évaluées en mesurant le temps de consommation total de 10\textsuperscript{6} messages, avec des logs détaillés pour comparer la rapidité et la distribution de la charge.
+
+\subsubsection{Comparaison fonctionnelle avec JMS}
+En parallèle, une implémentation avec JMS est réalisée à titre comparatif. Les points d’analyse porteront sur :
+\begin{itemize}
+    \item La configuration et la complexité de mise en place des brokers.
+    \item Le modèle de consommation (push vs pull) et la gestion de la concurrence.
+    \item La robustesse face aux pics de charge.
+\end{itemize}
+
+Ces observations permettront de dégager des conclusions sur les avantages de Kafka dans un contexte de données massives et de stream processing.
+
+\subsection{Détails de l’implémentation – Exercice 3 : Stream Processing}
+
+\subsubsection{Architecture de monitoring des capteurs}
+L’architecture pour le monitoring repose sur l’émission régulière de données par des capteurs de température installés dans divers bâtiments. Chaque message comporte :
+\begin{itemize}
+    \item \textbf{Clé :} Nom du bâtiment.
+    \item \textbf{Valeur :} Un ensemble structuré (par exemple au format JSON) comprenant le nom de la salle et la température relevée.
+\end{itemize}
+
+Les messages sont envoyés toutes les 10 secondes et le topic associé est configuré avec au moins 2 partitions pour permettre un parallélisme dans le traitement et une meilleure distribution de la charge.
+
+\subsubsection{Production multi-threadée des données}
+Un programme multi-producteurs est développé pour simuler la collecte simultanée des données provenant de plusieurs bâtiments. Chaque thread correspond à un bâtiment, ce qui permet de tester la robustesse du système en simulant un environnement réel où plusieurs capteurs envoient des données en simultané.
+
+\subsubsection{Traitement en temps réel avec Kafka Streams}
+Le consommateur basé sur Kafka Streams récupère les messages du topic et applique un traitement en continu :
+\begin{itemize}
+    \item \textbf{Fenêtre de temps de 5 minutes} : Pour chaque salle, les températures relevées sur une période de 5 minutes sont agrégées.
+    \item \textbf{Calcul de la moyenne} : Une fonction d’agrégation calcule la moyenne des températures pour détecter les anomalies.
+    \item \textbf{Déclenchement d’alertes} : Une fois la moyenne calculée, une vérification par rapport aux seuils définis (par exemple, seuil minimum et maximum) est effectuée. Si la moyenne sort de l’intervalle normal, une alerte est générée et pourra être redirigée vers un système de notification ou enregistrée dans un log spécifique.
+\end{itemize}
+
+Ce traitement en stream s’appuie sur les capacités de traitement distribuées et à faible latence de Kafka Streams, ce qui permet de réagir en quasi temps réel aux variations anormales de température.
+
+\subsubsection{Justification du choix de Kafka Streams}
+Kafka Streams offre une intégration native avec Kafka et permet de simplifier le développement d’applications de traitement de flux par rapport à des frameworks plus lourds comme Spark Streaming. Sa simplicité d’utilisation et sa capacité à se déployer dans une architecture microservices justifient son choix pour le monitoring en temps réel.
+
+
+\section{Évaluation et Résultats Attendus}
+
+\subsection{Critères d’évaluation pour l’Exercice 2}
+
+\begin{itemize}
+    \item \textbf{Fiabilité de la communication} : Le producteur doit être capable d’envoyer les messages sans perte, et le consommateur doit les recevoir correctement.
+    \item \textbf{Performance} : Les temps de consommation doivent être mesurés pour différentes configurations (nombre de consommateurs, groupes de consommation) et analysés.
+    \item \textbf{Comparaison fonctionnelle} : Une comparaison détaillée entre les mécanismes de consommation de Kafka et JMS doit être réalisée, en insistant sur la gestion de la charge et la scalabilité.
+\end{itemize}
+
+\subsection{Critères d’évaluation pour l’Exercice 3}
+
+\begin{itemize}
+    \item \textbf{Robustesse de l’architecture de monitoring} : La solution doit gérer la simultanéité des données provenant de plusieurs capteurs.
+    \item \textbf{Qualité du traitement en stream} : Le calcul des moyennes sur une fenêtre de 5 minutes doit être précis et les alertes déclenchées de manière cohérente.
+    \item \textbf{Scalabilité} : La capacité de l’architecture à monter en charge (en ajoutant de nouveaux producteurs ou consommateurs) sera également évaluée.
+\end{itemize}
+
+
+\section{Documentation technique}\label{sec:documentation-technique}
+
+La documentation technique est disponible dans le README.md du repository GitHub associé au projet.
+
+
+\section{Conclusion et Perspectives}
+
+Ce projet met en lumière l’intérêt d’utiliser des technologies de streaming modernes comme Kafka et Kafka Streams pour le traitement de données massives en temps réel.
+Les choix technologiques, justifiés par la performance, la scalabilité et la simplicité d’intégration, répondent aux besoins de systèmes critiques de monitoring et d’analyse de flux de données.
+
+Les perspectives d’amélioration incluent :
+\begin{itemize}
+    \item L’extension de l’architecture à un plus grand nombre de partitions pour tester la limite de montée en charge.
+    \item L’intégration d’outils de monitoring avancé (par exemple, Grafana et Prometheus) pour visualiser en temps réel l’état du système.
+    \item Une comparaison plus fine avec d’autres technologies de streaming afin d’optimiser le choix en fonction des cas d’usage spécifiques.
+\end{itemize}
+
+
+

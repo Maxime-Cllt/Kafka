@@ -1,4 +1,4 @@
-package org.kafka;
+package fr.kafka;
 
 
 import org.apache.kafka.clients.admin.AdminClient;
@@ -24,7 +24,7 @@ public class Main {
         for (String topic : topicName) {
             if (!topicExist(config, topic)) {
                 System.out.println("Initiation des topics...");
-                createTopic(config, topic, 1, (short) 1);
+                createTopic(config, topic, 2, (short) 1);
             }
         }
     }

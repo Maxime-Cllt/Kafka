@@ -1,4 +1,4 @@
-package org.kafka.exo3.consommateur;
+package fr.kafka.exo3.consommateur;
 
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
@@ -6,8 +6,8 @@ import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.*;
-import org.kafka.Constant;
-import org.kafka.exo3.DoubleArraySerde;
+import fr.kafka.Constant;
+import fr.kafka.exo3.DoubleArraySerde;
 
 import java.time.Duration;
 import java.util.Arrays;

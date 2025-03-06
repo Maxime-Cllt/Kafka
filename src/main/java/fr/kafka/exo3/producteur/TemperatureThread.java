@@ -1,4 +1,4 @@
-package org.kafka.exo3.producteur;
+package fr.kafka.exo3.producteur;
 
 public class TemperatureThread {
 

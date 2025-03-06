@@ -1,9 +1,9 @@
-package org.kafka.exo2;
+package fr.kafka.exo2;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.kafka.Constant;
+import fr.kafka.Constant;
 
 import java.util.Properties;
 import java.util.UUID;

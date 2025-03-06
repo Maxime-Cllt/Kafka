@@ -1,4 +1,4 @@
-package org.kafka;
+package fr.kafka;
 
 public class Constant {
 

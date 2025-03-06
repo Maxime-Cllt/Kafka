@@ -3,7 +3,7 @@ plugins {
     id("application")
 }
 
-group = "org.kafka"
+group = "fr.kafka"
 version = "1.0"
 
 repositories {
@@ -21,15 +21,14 @@ dependencies {
 
 
 tasks.register("runProducer", JavaExec::class) {
-    mainClass.set("org.kafka.Producer")
+    mainClass.set("fr.kafka.exo2.Producer")
     classpath = sourceSets["main"].runtimeClasspath
 }
 
 tasks.register("runConsumer", JavaExec::class) {
-    mainClass.set("org.kafka.Consumer")
+    mainClass.set("fr.kafka.exo2.Consumer")
     classpath = sourceSets["main"].runtimeClasspath
 }
-
 
 tasks.test {
     useJUnitPlatform()

@@ -1,4 +1,4 @@
-package org.kafka.exo3;
+package fr.kafka.exo3;
 
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;

@@ -1,10 +1,10 @@
-package org.kafka.exo2;
+package fr.kafka.exo2;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.kafka.Constant;
+import fr.kafka.Constant;
 
 import java.time.Duration;
 import java.util.Collections;

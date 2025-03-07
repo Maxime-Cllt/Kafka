@@ -16,6 +16,7 @@ public class Main {
     }
 
 
+    // Intialisation des topics Kafka
     public static void init() {
         final String topicName[] = {Constant.PREMIER_TOPIC, Constant.TEMPERATURE_TOPIC};
         Properties config = new Properties();
@@ -27,6 +28,8 @@ public class Main {
                 createTopic(config, topic, 2, (short) 1);
             }
         }
+
+        listAllTopics(config);
     }
 
 

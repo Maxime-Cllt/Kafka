@@ -1,13 +1,13 @@
 package fr.kafka.exo3.consommateur;
 
+import fr.kafka.Constant;
+import fr.kafka.exo3.DoubleArraySerde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.*;
-import fr.kafka.Constant;
-import fr.kafka.exo3.DoubleArraySerde;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -15,8 +15,8 @@ import java.util.Properties;
 
 public class TemperatureStreamProcessor {
 
-    private static final double MIN_TEMPERATURE = 5.0;
-    private static final double MAX_TEMPERATURE = 30.0;
+    private static final double MIN_TEMPERATURE = 10.0;
+    private static final double MAX_TEMPERATURE = 25.0;
 
     public static void main(String[] args) {
 
@@ -29,17 +29,16 @@ public class TemperatureStreamProcessor {
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
 
         StreamsBuilder builder = new StreamsBuilder();
-
         KStream<String, String> stream = builder.stream(Constant.TEMPERATURE_TOPIC);
 
-
+        // Transformation pour récupérer le nom du bâtiment et la température de chaque salle
         KStream<String, Double> roomTemperatureStream = stream.flatMap((building, message) -> {
             try {
                 final String[] parts = message.split(";");
                 if (parts.length == 2) {
                     final String salle = parts[0].trim();
                     final double temperature = Double.parseDouble(parts[1].trim());
-                    return Arrays.asList(KeyValue.pair(salle, temperature));
+                    return Arrays.asList(KeyValue.pair(building + "_" + salle, temperature));
                 }
             } catch (Exception e) {
                 System.err.println("Erreur lors du parsing du message : " + message + " (" + e.getMessage() + ")");
@@ -47,10 +46,10 @@ public class TemperatureStreamProcessor {
             return Arrays.asList();
         });
 
-        // Fenêtre tumblante de 5 minutes (sans délai de grâce)
+        // Fenêtre de 5 minutes
         TimeWindows tumblingWindow = TimeWindows.ofSizeWithNoGrace(Duration.ofMinutes(5));
 
-        // Pour calculer la moyenne, nous allons agréger sous la forme d'un tableau [somme, nombre]
+        // Pour calculer la moyenne de température par salle sous la forme [somme, nombre de valeurs]
         KTable<Windowed<String>, double[]> aggregated = roomTemperatureStream
                 .groupByKey(Grouped.with(Serdes.String(), Serdes.Double()))
                 .windowedBy(tumblingWindow)
@@ -65,20 +64,20 @@ public class TemperatureStreamProcessor {
                 agg[1] == 0 ? 0.0 : agg[0] / agg[1]
         );
 
-        // Pour chaque calcul, on vérifie si la moyenne sort des seuils et on émet une alerte
+        // Pour chaque fenêtre -> affichage de la température moyenne par salle
         averageTemperature.toStream().foreach((windowedRoom, avg) -> {
             String room = windowedRoom.key();
-            System.out.println("Salle : " + room + " | Température moyenne (fenêtre "
-                    + windowedRoom.window().startTime() + " à " + windowedRoom.window().endTime() + ") = " + avg);
+            System.out.println(room + " | Température moyenne (fenêtre "
+                    + windowedRoom.window().startTime() + " à " + windowedRoom.window().endTime() + ") = " + avg + "°C");
             if (avg < MIN_TEMPERATURE || avg > MAX_TEMPERATURE) {
-                System.out.println(">>> ALERTE : La température moyenne de la " + room + " est hors seuil (" + avg + "°C) !");
+                System.out.println(Constant.RED + ">>> ALERTE : La température moyenne de la " + room + " est hors seuil (" + avg + "°C) !" + Constant.RESET);
             }
         });
 
         KafkaStreams streams = new KafkaStreams(builder.build(), props);
         streams.start();
 
-        // Ajout d'un hook d'arrêt propre
+        // Pour arrêter proprement le stream lors de l'arrêt du programme
         Runtime.getRuntime().addShutdownHook(new Thread(streams::close));
     }
 }

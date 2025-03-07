@@ -1,9 +1,9 @@
 package fr.kafka.exo3.producteur;
 
+import fr.kafka.Constant;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import fr.kafka.Constant;
 
 import java.util.Properties;
 import java.util.Random;
@@ -42,18 +42,17 @@ public class TemperatureProducteur {
 
         while (true) {
             for (TemperatureSalle salle : this.salles) {
-                value = salle.name() + ";" + salle.lastTemperature();
+                value = salle.name() + ";" + random.nextInt(35);
                 record = new ProducerRecord<>(Constant.TEMPERATURE_TOPIC, nomBatiment, value);
                 producer.send(record);
-                System.out.println("Envoi de " + value);
+                System.out.println("Envoi de " + value + " pour le bâtiment " + nomBatiment);
             }
             try {
-                TimeUnit.SECONDS.sleep(5);
+                TimeUnit.SECONDS.sleep(10);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
     }
-
 }
 

@@ -39,9 +39,8 @@ Le projet repose sur plusieurs composants :
 
 ### 📌 Prérequis
 
-- **Java 17+** 
+- **Java 17+**
 - **Docker** et **Docker Compose**
-
 
 ### 🔹 Installation
 
@@ -64,8 +63,6 @@ docker-compose up
 gradlew clean build
 gradlew <nom de la classe>
 ```
-
-
 
 ## 📊 Résultats attendus
 

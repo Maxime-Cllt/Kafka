@@ -16,7 +16,7 @@ public class DoubleArraySerde implements Serde<double[]> {
             public byte[] serialize(String topic, double[] data) {
                 if (data == null)
                     return null;
-                ByteBuffer buffer = ByteBuffer.allocate(16); // 2 doubles = 16 octets
+                final ByteBuffer buffer = ByteBuffer.allocate(16);
                 buffer.putDouble(data[0]);
                 buffer.putDouble(data[1]);
                 return buffer.array();
@@ -31,16 +31,16 @@ public class DoubleArraySerde implements Serde<double[]> {
             public double[] deserialize(String topic, byte[] data) {
                 if (data == null || data.length != 16)
                     return new double[]{0.0, 0.0};
-                ByteBuffer buffer = ByteBuffer.wrap(data);
-                double sum = buffer.getDouble();
-                double count = buffer.getDouble();
+                final ByteBuffer buffer = ByteBuffer.wrap(data);
+                final double sum = buffer.getDouble();
+                final double count = buffer.getDouble();
                 return new double[]{sum, count};
             }
         };
     }
 
     @Override
-    public void configure(Map<String, ?> configs, boolean isKey) {
+    public void configure(final Map<String, ?> configs, final boolean isKey) {
     }
 
     @Override

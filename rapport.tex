@@ -128,8 +128,8 @@ Ces observations permettront de dégager des conclusions sur les avantages de Ka
 \subsubsection{Architecture de monitoring des capteurs}
 L’architecture pour le monitoring repose sur l’émission régulière de données par des capteurs de température installés dans divers bâtiments. Chaque message comporte :
 \begin{itemize}
-    \item \textbf{Clé :} Nom du bâtiment.
-    \item \textbf{Valeur :} Un ensemble structuré (par exemple au format JSON) comprenant le nom de la salle et la température relevée.
+    \item \textbf{Clé :} Nom du bâtiment, pour permettre une agrégation par bâtiment. (exemple : "Bâtiment A")
+    \item \textbf{Valeur :} Une chaine de caractères contenant le nom de la salle et la température relevée, séparés par un point-virgule. (Exemple : "Salle 1;22.5")
 \end{itemize}
 
 Les messages sont envoyés toutes les 10 secondes et le topic associé est configuré avec au moins 2 partitions pour permettre un parallélisme dans le traitement et une meilleure distribution de la charge.
@@ -141,6 +141,7 @@ Un programme multi-producteurs est développé pour simuler la collecte simultan
 Le consommateur basé sur Kafka Streams récupère les messages du topic et applique un traitement en continu :
 \begin{itemize}
     \item \textbf{Fenêtre de temps de 5 minutes} : Pour chaque salle, les températures relevées sur une période de 5 minutes sont agrégées.
+    La clé de la fenêtre est définie par le nom du bâtiment et de la salle, cela permet de pouvoir regrouper les données par salle et par bâtiment.
     \item \textbf{Calcul de la moyenne} : Une fonction d’agrégation calcule la moyenne des températures pour détecter les anomalies.
     \item \textbf{Déclenchement d’alertes} : Une fois la moyenne calculée, une vérification par rapport aux seuils définis (par exemple, seuil minimum et maximum) est effectuée. Si la moyenne sort de l’intervalle normal, une alerte est générée et pourra être redirigée vers un système de notification ou enregistrée dans un log spécifique.
 \end{itemize}
@@ -155,19 +156,25 @@ Kafka Streams offre une intégration native avec Kafka et permet de simplifier l
 
 \subsection{Critères d’évaluation pour l’Exercice 2}
 
-\begin{itemize}
-    \item \textbf{Fiabilité de la communication} : Le producteur doit être capable d’envoyer les messages sans perte, et le consommateur doit les recevoir correctement.
-    \item \textbf{Performance} : Les temps de consommation doivent être mesurés pour différentes configurations (nombre de consommateurs, groupes de consommation) et analysés.
-    \item \textbf{Comparaison fonctionnelle} : Une comparaison détaillée entre les mécanismes de consommation de Kafka et JMS doit être réalisée, en insistant sur la gestion de la charge et la scalabilité.
-\end{itemize}
+\subsubsection{Comparaison des performances entre Kafka et JMS}
 
-\subsection{Critères d’évaluation pour l’Exercice 3}
+L’analyse confirme que Kafka offre une meilleure scalabilité, une gestion native des offsets et une persistance robuste, contrairement à JMS qui présente des limitations pour le traitement de gros volumes en temps réel.
+Résultat : La comparaison révèle que Kafka est particulièrement adapté aux environnements nécessitant une haute performance, une tolérance aux pannes et une gestion efficace des flux de messages, alors que JMS convient mieux à des scénarios de messagerie plus traditionnels.
 
-\begin{itemize}
-    \item \textbf{Robustesse de l’architecture de monitoring} : La solution doit gérer la simultanéité des données provenant de plusieurs capteurs.
-    \item \textbf{Qualité du traitement en stream} : Le calcul des moyennes sur une fenêtre de 5 minutes doit être précis et les alertes déclenchées de manière cohérente.
-    \item \textbf{Scalabilité} : La capacité de l’architecture à monter en charge (en ajoutant de nouveaux producteurs ou consommateurs) sera également évaluée.
-\end{itemize}
+\subsubsection{Simulation d’une charge importante}
+
+Voici les résultats pour la simulation d’une charge importante :
+
+\item Plusieurs producteurs ont été utilisés pour générer rapidement 10⁶ messages sur un topic à 2 partitions.
+
+\item Résultat : Le système a traité la masse de messages sans aucune perte, démontrant la capacité de Kafka à gérer de gros volumes de données tout en maintenant des performances stables.
+
+
+\subsection{Evaluation pour l’Exercice 3}
+
+\subsubsection{Traitement en temps réel des données de température}
+
+
 
 
 \section{Documentation technique}\label{sec:documentation-technique}

@@ -77,7 +77,6 @@ public class TemperatureStreamProcessor {
         KafkaStreams streams = new KafkaStreams(builder.build(), props);
         streams.start();
 
-        // Pour arrêter proprement le stream lors de l'arrêt du programme
         Runtime.getRuntime().addShutdownHook(new Thread(streams::close));
     }
 }

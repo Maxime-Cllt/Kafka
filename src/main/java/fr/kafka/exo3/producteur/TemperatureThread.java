@@ -3,7 +3,7 @@ package fr.kafka.exo3.producteur;
 public class TemperatureThread {
 
     public static void main(String[] args) {
-        final int nbThreads = 15;
+        final int nbThreads = 20;
 
         // Création de plusieurs threads pour simuler plusieurs producteurs de température
         for (int i = 0; i < nbThreads; i++) {

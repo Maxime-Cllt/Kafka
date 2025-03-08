@@ -42,7 +42,7 @@ Le projet repose sur plusieurs composants :
 - **Java 17+**
 - **Docker** et **Docker Compose**
 
-### 🔹 Installation
+### 🔹 Installation et Exécution
 
 1. Cloner le dépôt GitHub :
 
@@ -57,12 +57,27 @@ cd Kafka
 docker-compose up
 ```
 
-3. Compiler et exécuter les classes Java :
+3. Compiler et exécuter les classes Java pour l'initialisation des topics :
 
 ```bash
 gradlew clean build
-gradlew <nom de la classe>
+gradlew runMain
 ```
+
+### 📦 Exercice 2 : Clients Kafka en Java
+
+```bash
+gradlew runProducer
+gradlew runConsumer
+```
+
+### 📦 Exercice 3 : Stream Processing avec Kafka
+
+```bash
+gradlew runEx3Consumer
+gradlew runEx3Producteur
+```
+
 
 ## 📊 Résultats attendus
 

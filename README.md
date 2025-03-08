@@ -1,8 +1,5 @@
 # Kafka Java Project - Gestion et Analyse des Données Massives
 
-Lien du
-rapport : [Google Docs](https://docs.google.com/document/d/1lQLYvurFBKFSZf75EUDY6nXk9LKN0_AtvOI5bWYghkI/edit?usp=sharing)
-
 ## Introduction
 
 Ce projet s'inscrit dans le cadre du **Master 2 Bases de Données et Intelligence Artificielle**, dans le module de *
